@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ai-Medic</title>
+
+    <!-- Add the link to your Tailwind CSS stylesheet -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-blue-500 p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Left Side - Ai-Medic Title -->
+            <a href="{{ url_for('home') }}" class="text-white text-2xl font-bold hover:underline">Ai-Medic</a>
+
+            <!-- Right Side - Navigation Links -->
+            <div class="space-x-4">
+                <a href="{{ url_for('index') }}" class="text-white hover:underline">Medical Chatbot</a>
+                <a href="{{ url_for('mental') }}" class="text-white hover:underline">Mental Health Bot</a>
+                <a href="{{ url_for('disease') }}" class="text-white hover:underline">Disease Predictor</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Disease Predictor Container -->
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="max-w-md w-full p-4 bg-white rounded-md shadow-md">
+            <h1 class="text-3xl sm:text-2xl md:text-3xl font-bold mb-4">Disease Predictor</h1>
+            <div id="chat-container" class="space-y-4">
+        <div id="chat-container" class="space-y-4">
+            <div id="chat" class="border-t-2 border-gray-200 pt-4"></div>
+            <div class="flex flex-col space-y-2">
+                <div class="flex space-x-2">
+                    <input type="text" id="symptom1" placeholder="Enter symptom 1..."
+                        class="flex-1 border border-gray-300 p-2 rounded-md text-sm sm:text-base">
+                    <input type="text" id="symptom2" placeholder="Enter symptom 2..."
+                        class="flex-1 border border-gray-300 p-2 rounded-md text-sm sm:text-base">
+                </div>
+                <div class="flex space-x-2">
+                    <input type="text" id="symptom3" placeholder="Enter symptom 3..."
+                        class="flex-1 border border-gray-300 p-2 rounded-md text-sm sm:text-base">
+                    <input type="text" id="symptom4" placeholder="Enter symptom 4..."
+                        class="flex-1 border border-gray-300 p-2 rounded-md text-sm sm:text-base">
+                </div>
+                <button onclick="predictDisease()"
+                    class="bg-blue-500 text-white px-4 py-2 rounded-md text-sm sm:text-base">Predict Disease</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function predictDisease() {
+            var symptom1 = document.getElementById('symptom1').value;
+            var symptom2 = document.getElementById('symptom2').value;
+            var symptom3 = document.getElementById('symptom3').value;
+            var symptom4 = document.getElementById('symptom4').value;
+
+            document.getElementById('chat').innerHTML += `<p class="text-blue-500">Symptom 1: ${symptom1}</p>`;
+            document.getElementById('chat').innerHTML += `<p class="text-blue-500">Symptom 2: ${symptom2}</p>`;
+            document.getElementById('chat').innerHTML += `<p class="text-blue-500">Symptom 3: ${symptom3}</p>`;
+            document.getElementById('chat').innerHTML += `<p class="text-blue-500">Symptom 4: ${symptom4}</p>`;
+
+            // Send symptoms to the server for disease prediction
+            fetch('/predict-disease', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `symptom1=${encodeURIComponent(symptom1)}&symptom2=${encodeURIComponent(symptom2)}&symptom3=${encodeURIComponent(symptom3)}&symptom4=${encodeURIComponent(symptom4)}`,
+            })
+                .then(response => response.json())
+                .then(data => {
+                    var predictedDisease = data.predicted_disease;
+                    document.getElementById('chat').innerHTML += `<p class="text-green-500">Predicted Disease: ${predictedDisease}</p>`;
+                });
+        }
+    </script>
+</body>
+
+</html>
